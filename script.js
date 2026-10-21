@@ -57,9 +57,20 @@ var L = {
     }
 };
 
-// ---------- État : niveau et semaine choisis ----------
+// ---------- État : niveau, semaine et séances cochées ----------
 var lv = "deb";
 var wk = 0;
+var done = {};
+
+try {
+    done = JSON.parse(localStorage.getItem("done") || "{}");
+} catch (e) {}
+
+function save() {
+    try {
+        localStorage.setItem("done", JSON.stringify(done));
+    } catch (e) {}
+}
 
 // ---------- Crée une rangée de boutons ----------
 function mk(parent, items, cur, fn) {
@@ -79,6 +90,59 @@ function mk(parent, items, cur, fn) {
 // ---------- Protège le texte inséré dans le HTML ----------
 function esc(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+}
+
+// ---------- Barre de progression de la semaine ----------
+function updateProgress(total) {
+    var prefix = lv + "-" + wk + "-";
+    var n = Object.keys(done).filter(function (k) {
+        return k.indexOf(prefix) === 0;
+    }).length;
+
+    document.getElementById("bar").style.width = (n / total * 100) + "%";
+    document.getElementById("count").textContent = n + " / " + total + " séances faites";
+}
+
+// ---------- Liste des séances avec cases à cocher ----------
+function renderPlan(sessions) {
+    var plan = document.getElementById("plan");
+    plan.innerHTML = "";
+
+    sessions.forEach(function (x, i) {
+        var key = lv + "-" + wk + "-" + i;
+
+        var li = document.createElement("li");
+        var label = document.createElement("label");
+        var box = document.createElement("input");
+        var span = document.createElement("span");
+        var title = document.createElement("b");
+
+        box.type = "checkbox";
+        box.checked = !!done[key];
+        li.className = box.checked ? "done" : "";
+
+        box.onchange = function () {
+            if (box.checked) {
+                done[key] = true;
+            } else {
+                delete done[key];
+            }
+            li.className = box.checked ? "done" : "";
+            save();
+            updateProgress(sessions.length);
+        };
+
+        title.textContent = x[0];
+        span.appendChild(title);
+        span.appendChild(document.createTextNode(x[1]));
+
+        label.appendChild(box);
+        label.appendChild(span);
+        li.appendChild(label);
+        plan.appendChild(li);
+    });
+
+    updateProgress(sessions.length);
 }
 
 // ---------- Affiche la page selon le niveau et la semaine ----------
@@ -110,15 +174,65 @@ function draw() {
     );
 
     document.getElementById("desc").textContent = d.d;
-
-    document.getElementById("plan").innerHTML = d.s(wk).map(function (x) {
-        return "<li><b>" + esc(x[0]) + "</b>" + esc(x[1]) + "</li>";
-    }).join("");
+    renderPlan(d.s(wk));
 
     document.getElementById("tips").innerHTML = d.t.map(function (x) {
         return "<div><h3>" + esc(x[0]) + "</h3><p>" + esc(x[1]) + "</p></div>";
     }).join("");
 }
 
+// ---------- Calculateur d’allure ----------
+function fmt(sec) {
+    var m = Math.floor(sec / 60);
+    var s = Math.round(sec % 60);
+
+    if (s === 60) {
+        m++;
+        s = 0;
+    }
+    return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function calc() {
+    var km = parseFloat(document.getElementById("dist").value);
+    var m = parseInt(document.getElementById("min").value, 10) || 0;
+    var s = parseInt(document.getElementById("sec").value, 10) || 0;
+    var total = m * 60 + s;
+    var out = document.getElementById("result");
+
+    if (!(km > 0) || total <= 0) {
+        out.textContent = "Entre une distance et un temps.";
+        return;
+    }
+
+    out.textContent = fmt(total / km) + " min/km · " + (km / (total / 3600)).toFixed(1) + " km/h";
+}
+
+["dist", "min", "sec"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+});
+
+// ---------- Thème clair / sombre ----------
+function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try {
+        localStorage.setItem("theme", t);
+    } catch (e) {}
+}
+
+try {
+    var saved = localStorage.getItem("theme");
+    if (saved) {
+        applyTheme(saved);
+    }
+} catch (e) {}
+
+document.getElementById("theme").onclick = function () {
+    var cur = document.documentElement.getAttribute("data-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(cur === "dark" ? "light" : "dark");
+};
+
 // ---------- Premier affichage ----------
 draw();
+calc();
