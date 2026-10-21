@@ -1,5 +1,5 @@
 // ---------- Données : une entrée par niveau ----------
-// s(w) renvoie les séances de la semaine w (0 à 3)
+// s(w) renvoie les séances pour le palier de charge w
 // t contient les conseils propres au niveau
 var L = {
     deb: {
@@ -32,7 +32,7 @@ var L = {
         },
         t: [
             ["Fractionné", "Vite, pas à fond : tu dois pouvoir tenir la dernière répétition au même rythme que la première."],
-            ["Semaine 4", "Gère-la comme une semaine d’adaptation : ne dépasse pas ce qui est prévu."],
+            ["Semaines allégées", "Les semaines 4 et 8 sont plus légères : ne les rallonge pas, c’est là que tu assimiles."],
             ["Récupération", "Dors 7 à 8 heures : c’est là que tu progresses."]
         ]
     },
@@ -43,7 +43,7 @@ var L = {
         s: function (w) {
             return [
                 ["Footing", (45 + w * 3) + " min à allure facile"],
-                ["Seuil", "3 × " + (8 + w * 2) + " min allure seuil, 2 min de récupération"],
+                ["Seuil", "3 × " + (8 + w) + " min allure seuil, 2 min de récupération"],
                 ["VMA", (8 + w) + " × 400 m vite, 1 min 30 de récupération"],
                 ["Footing de récupération", "35 min très tranquille"],
                 ["Sortie longue", (90 + w * 5) + " min dont " + (20 + w * 5) + " min à allure semi"]
@@ -52,10 +52,16 @@ var L = {
         t: [
             ["Seuil", "Allure « confortablement difficile » : tu peux dire quelques mots mais pas tenir une conversation."],
             ["80/20", "Environ 80 % de ton volume reste en allure facile."],
-            ["Charge", "Après trois semaines qui montent, prévois une semaine plus légère."]
+            ["Charge", "Les semaines 4 et 8 sont allégées : respecte-les, elles préparent le bloc suivant."]
         ]
     }
 };
+
+// ---------- Plan sur 8 semaines ----------
+// Palier de charge de chaque semaine : trois semaines qui montent,
+// puis une semaine allégée (semaines 4 et 8)
+var STEPS = [0, 1, 2, 1, 3, 4, 5, 3];
+var DELOAD = [3, 7];
 
 // ---------- État : niveau, semaine et séances cochées ----------
 var lv = "deb";
@@ -163,7 +169,7 @@ function draw() {
 
     mk(
         document.getElementById("weeks"),
-        [0, 1, 2, 3].map(function (i) {
+        STEPS.map(function (s, i) {
             return [i, "Semaine " + (i + 1)];
         }),
         wk,
@@ -174,7 +180,13 @@ function draw() {
     );
 
     document.getElementById("desc").textContent = d.d;
-    renderPlan(d.s(wk));
+
+    document.getElementById("note").textContent =
+        DELOAD.indexOf(wk) !== -1
+            ? "Semaine allégée : moins de volume pour mieux assimiler le travail des semaines précédentes."
+            : "";
+
+    renderPlan(d.s(STEPS[wk]));
 
     document.getElementById("tips").innerHTML = d.t.map(function (x) {
         return "<div><h3>" + esc(x[0]) + "</h3><p>" + esc(x[1]) + "</p></div>";
@@ -182,6 +194,11 @@ function draw() {
 }
 
 // ---------- Calculateur d’allure ----------
+function pad(n) {
+    return (n < 10 ? "0" : "") + n;
+}
+
+// Formate une allure en m:ss (par exemple 5:20)
 function fmt(sec) {
     var m = Math.floor(sec / 60);
     var s = Math.round(sec % 60);
@@ -190,25 +207,73 @@ function fmt(sec) {
         m++;
         s = 0;
     }
-    return m + ":" + (s < 10 ? "0" : "") + s;
+    return m + ":" + pad(s);
+}
+
+// Formate une durée en h:mm:ss ou m:ss
+function fmtTime(sec) {
+    var h = Math.floor(sec / 3600);
+    var m = Math.floor((sec % 3600) / 60);
+    var s = Math.round(sec % 60);
+
+    if (s === 60) {
+        s = 0;
+        m++;
+    }
+    if (m === 60) {
+        m = 0;
+        h++;
+    }
+    return (h > 0 ? h + ":" + pad(m) : m) + ":" + pad(s);
+}
+
+// ---------- Prédictions de temps (formule de Riegel) ----------
+var RACES = [
+    ["5 km", 5],
+    ["10 km", 10],
+    ["Semi-marathon", 21.0975],
+    ["Marathon", 42.195]
+];
+
+function renderPred(km, total) {
+    var pred = document.getElementById("pred");
+    pred.innerHTML = "";
+
+    RACES.forEach(function (r) {
+        var t = total * Math.pow(r[1] / km, 1.06);
+
+        var li = document.createElement("li");
+        var name = document.createElement("span");
+        var time = document.createElement("b");
+
+        name.textContent = r[0];
+        time.textContent = fmtTime(t);
+
+        li.appendChild(name);
+        li.appendChild(time);
+        pred.appendChild(li);
+    });
 }
 
 function calc() {
     var km = parseFloat(document.getElementById("dist").value);
+    var h = parseInt(document.getElementById("hrs").value, 10) || 0;
     var m = parseInt(document.getElementById("min").value, 10) || 0;
     var s = parseInt(document.getElementById("sec").value, 10) || 0;
-    var total = m * 60 + s;
+    var total = h * 3600 + m * 60 + s;
     var out = document.getElementById("result");
 
     if (!(km > 0) || total <= 0) {
         out.textContent = "Entre une distance et un temps.";
+        document.getElementById("pred").innerHTML = "";
         return;
     }
 
     out.textContent = fmt(total / km) + " min/km · " + (km / (total / 3600)).toFixed(1) + " km/h";
+    renderPred(km, total);
 }
 
-["dist", "min", "sec"].forEach(function (id) {
+["dist", "hrs", "min", "sec"].forEach(function (id) {
     document.getElementById(id).addEventListener("input", calc);
 });
 
