@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
     <title>Courir – plans d’entraînement selon ton niveau</title>
-    <meta name="description" content="Plans d’entraînement de course à pied sur 4 semaines pour débutants, intermédiaires et confirmés, avec suivi des séances et calculateur d’allure.">
+    <meta name="description" content="Plans d’entraînement de course à pied sur 8 semaines pour débutants, intermédiaires et confirmés, avec suivi des séances, calculateur d’allure et prédictions de temps.">
     <link rel="canonical" href="https://trehorel.github.io/courir/">
     <meta name="theme-color" content="#1f7a8c">
 
@@ -16,12 +16,12 @@
     <meta property="og:site_name" content="Courir">
     <meta property="og:url" content="https://trehorel.github.io/courir/">
     <meta property="og:title" content="Courir – plans d’entraînement selon ton niveau">
-    <meta property="og:description" content="Plans de course à pied sur 4 semaines pour débutants, intermédiaires et confirmés, avec suivi des séances et calculateur d’allure.">
+    <meta property="og:description" content="Plans de course à pied sur 8 semaines pour débutants, intermédiaires et confirmés, avec suivi des séances et calculateur d’allure.">
 
     <!-- Aperçu lors du partage (X / Twitter) -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Courir – plans d’entraînement selon ton niveau">
-    <meta name="twitter:description" content="Plans de course à pied sur 4 semaines pour débutants, intermédiaires et confirmés.">
+    <meta name="twitter:description" content="Plans de course à pied sur 8 semaines pour débutants, intermédiaires et confirmés.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
@@ -44,6 +44,7 @@
         <p class="desc" id="desc"></p>
 
         <div class="seg" id="weeks" role="group" aria-label="Semaine"></div>
+        <p class="note" id="note" aria-live="polite"></p>
 
         <div class="progress"><div id="bar"></div></div>
         <p id="count"></p>
@@ -55,16 +56,26 @@
         <h2>Calculateur d’allure</h2>
         <div class="calc">
             <label>Distance (km)
-                <input id="dist" type="number" min="0" step="0.1" value="10">
+                <input id="dist" type="number" min="0" step="0.1" value="0">
+            </label>
+            <label>Heures
+                <input id="h" type="number" min="0" value="0">
             </label>
             <label>Minutes
-                <input id="min" type="number" min="0" value="55">
+                <input id="min" type="number" min="0" max="59" value="0">
             </label>
             <label>Secondes
                 <input id="sec" type="number" min="0" max="59" value="0">
             </label>
         </div>
         <p class="result" id="result" aria-live="polite"></p>
+
+        <h3 class="sub">Temps estimés sur d’autres distances</h3>
+        <ul class="pred" id="pred"></ul>
+        <p class="small">
+            Estimations indicatives (formule de Riegel) : elles supposent un
+            entraînement adapté à la distance, surtout pour le marathon.
+        </p>
 
         <footer>
             Écoute ton corps : en cas de douleur persistante, lève le pied
