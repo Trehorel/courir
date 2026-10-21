@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Courir – plans d’entraînement selon ton niveau</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <h1>Courir,<br>à ton rythme.</h1>
+        <p class="lead">
+            Choisis ton niveau : le nombre de séances, leur durée et leur intensité
+            changent vraiment, semaine après semaine.
+        </p>
+        <div class="road" aria-hidden="true"></div>
+
+        <h2>Ton niveau</h2>
+        <div class="seg" id="levels" role="group" aria-label="Niveau"></div>
+        <p class="desc" id="desc"></p>
+
+        <div class="seg" id="weeks" role="group" aria-label="Semaine"></div>
+        <ul class="list" id="plan" aria-live="polite"></ul>
+
+        <h2>Conseils pour ce niveau</h2>
+        <div class="tips" id="tips"></div>
+
+        <footer>
+            Écoute ton corps : en cas de douleur persistante, lève le pied
+            et consulte un professionnel de santé.
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
