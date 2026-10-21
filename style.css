@@ -1,0 +1,188 @@
+/* ---------- Couleurs et réglages de base ---------- */
+:root {
+    --bg: #eef2f5;
+    --ink: #12263a;
+    --mut: #4d6074;
+    --card: #fff;
+    --line: #cdd8e1;
+    --acc: #1f7a8c;
+    --sun: #f2b134;
+    --onacc: #fff;
+
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ---------- Mode sombre (automatique) ---------- */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #0e1b29;
+        --ink: #e8eff5;
+        --mut: #9db0c2;
+        --card: #16293b;
+        --line: #2a4054;
+        --acc: #4fb3c6;
+        --sun: #f2b134;
+        --onacc: #0e1b29;
+    }
+}
+
+/* ---------- Mode sombre (forcé) ---------- */
+:root[data-theme="dark"] {
+    --bg: #0e1b29;
+    --ink: #e8eff5;
+    --mut: #9db0c2;
+    --card: #16293b;
+    --line: #2a4054;
+    --acc: #4fb3c6;
+    --sun: #f2b134;
+    --onacc: #0e1b29;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 1.05rem/1.6 "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+main {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+}
+
+/* ---------- Titres et textes ---------- */
+h1 {
+    font-size: clamp(2.6rem, 9vw, 5.5rem);
+    line-height: 0.95;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 3.5rem 0 1rem;
+}
+
+h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 3rem 0 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.lead {
+    max-width: 38rem;
+    color: var(--mut);
+    font-size: 1.2rem;
+    margin: 0 0 2rem;
+}
+
+.desc {
+    color: var(--mut);
+    margin: 0.9rem 0 1.5rem;
+    max-width: 40rem;
+}
+
+/* ---------- Ligne décorative ---------- */
+.road {
+    height: 6px;
+    border-radius: 3px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--sun) 0 28px,
+        transparent 28px 48px
+    );
+    margin: 0 0 2rem;
+}
+
+/* ---------- Boutons (niveaux et semaines) ---------- */
+.seg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    padding: 0.6rem 1.1rem;
+    border-radius: 2rem;
+    font-weight: 700;
+}
+
+button[aria-pressed="true"] {
+    background: var(--acc);
+    border-color: var(--acc);
+    color: var(--onacc);
+}
+
+button:focus-visible {
+    outline: 3px solid var(--sun);
+    outline-offset: 2px;
+}
+
+/* ---------- Liste des séances ---------- */
+.list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.list li {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--acc);
+    border-radius: 0.5rem;
+    padding: 0.8rem 1rem;
+}
+
+.list b {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--acc);
+}
+
+/* ---------- Conseils ---------- */
+.tips {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.tips div {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    padding: 1rem 1.2rem;
+}
+
+.tips h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.1rem;
+}
+
+.tips p {
+    margin: 0;
+    color: var(--mut);
+}
+
+/* ---------- Pied de page ---------- */
+footer {
+    margin-top: 3rem;
+    color: var(--mut);
+    font-size: 0.9rem;
+}
