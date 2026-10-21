@@ -186,3 +186,88 @@ footer {
     color: var(--mut);
     font-size: 0.9rem;
 }
+
+/* ---------- Bouton de thème ---------- */
+.theme {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    right: 0.75rem;
+    z-index: 10;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+/* ---------- Progression de la semaine ---------- */
+.progress {
+    height: 10px;
+    background: var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 1.25rem;
+}
+
+#bar {
+    height: 100%;
+    width: 0;
+    background: var(--acc);
+    transition: width 0.3s;
+}
+
+#count {
+    color: var(--mut);
+    font-size: 0.9rem;
+    margin: 0.4rem 0 0;
+}
+
+/* ---------- Cases à cocher ---------- */
+.list label {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.list input {
+    flex-shrink: 0;
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-top: 0.25rem;
+    accent-color: var(--acc);
+}
+
+.list li.done {
+    opacity: 0.6;
+}
+
+/* ---------- Calculateur d’allure ---------- */
+.calc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.calc label {
+    display: grid;
+    gap: 0.3rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.calc input {
+    font: inherit;
+    width: 7rem;
+    padding: 0.55rem 0.7rem;
+    border: 2px solid var(--line);
+    border-radius: 0.5rem;
+    background: var(--card);
+    color: var(--ink);
+}
+
+.result {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--acc);
+    margin: 1rem 0 0;
+}
